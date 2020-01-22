@@ -22,7 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
-    TextView sensorgas;
+    TextView sensorgas, stts;
     Notification.Builder noti;
     private NotificationManager mManager;
     public static final String ANDROID_CHANNEL_ID = "com.rekpro.sensorgas";
@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         createChannels();
         sensorgas = findViewById(R.id.txtGas);
+        stts = findViewById(R.id.textView3);
+
         FirebaseDatabase Datab=FirebaseDatabase.getInstance();
         DatabaseReference ref=Datab.getReference("gasensor");
 
@@ -63,9 +65,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int h = dataSnapshot.getValue(Integer.class);
-                sensorgas.setText(Integer.toString(h));
+                int sen = h * 100;
+                sensorgas.setText(Integer.toString(sen) + " PPM");
                 if (h >= 50){
-                    notima.notify(notid, noti.build());}
+                    notima.notify(notid, noti.build());
+                    stts.setText("Bahaya Ada Kebocoran");
+                    stts.setTextColor(getResources().getColor(R.color.colorAccent));
+                    sensorgas.setTextColor(getResources().getColor(R.color.colorAccent));
+                }else {
+                    stts.setText("Gass LPG Aman!");
+                    sensorgas.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    stts.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
